@@ -49,7 +49,7 @@ export function CinematicButton({
             {content}
           </a>
         ) : (
-          <Link className={classes} href={href}>
+          <Link prefetch={false} className={classes} href={href}>
             {content}
           </Link>
         )}

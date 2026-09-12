@@ -33,7 +33,7 @@ export function ResumeView(): React.JSX.Element {
 
       <main id="main" className={styles.page}>
         <header className={`${styles.head} enter`} style={enterDelay(0)}>
-          <Link href="/" className={styles.back}>
+          <Link prefetch={false} href="/" className={styles.back}>
             <ArrowLeft size={14} aria-hidden="true" />
             <span className="type-meta type-meta--wide">Back to the experience</span>
           </Link>

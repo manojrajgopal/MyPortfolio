@@ -13,6 +13,11 @@ import styles from './CinematicNavigation.module.css';
 /**
  * The chapter navigator.
  *
+ * Links opt out of prefetching: the static export writes its route payloads
+ * under paths the client router does not request, so every prefetch 404s and
+ * falls back to a full navigation regardless. With three routes that fallback
+ * costs nothing and the console stays clean.
+ *
  * Reads as a film timeline rather than a navbar: a name, a column of numbered
  * chapters, and the two routes off this page. Selecting a chapter flies the
  * camera there instead of jumping the scroll position.
@@ -32,7 +37,7 @@ export function CinematicNavigation(): React.JSX.Element {
 
   return (
     <nav className={styles.nav} aria-label="Chapters">
-      <Link href="/" className={styles.brand}>
+      <Link prefetch={false} href="/" className={styles.brand}>
         <span className="type-meta type-meta--wide ivory">{personal.name}</span>
       </Link>
 
@@ -69,7 +74,12 @@ export function CinematicNavigation(): React.JSX.Element {
 
         <li className={styles.routes}>
           {routes.map((route) => (
-            <Link key={route.href} href={route.href} className={styles.route}>
+            <Link
+              key={route.href}
+              prefetch={false}
+              href={route.href}
+              className={styles.route}
+            >
               <span className="type-meta">{route.label}</span>
             </Link>
           ))}

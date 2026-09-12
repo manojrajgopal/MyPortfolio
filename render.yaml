@@ -1,0 +1,54 @@
+# Render blueprint — https://render.com/docs/blueprint-spec
+#
+# Commit this file and Render can create the service from it directly
+# (New → Blueprint), instead of filling the New Static Site form by hand.
+services:
+  - type: web
+    runtime: static
+    name: MyPortfolio
+    branch: main
+
+    # `--include=dev` is required, not optional.
+    #
+    # npm omits devDependencies by default when NODE_ENV is "production", and
+    # this project's build depends on several of them: typescript, tailwindcss,
+    # @tailwindcss/postcss and the @types packages. Without the flag the build
+    # fails at the PostCSS step.
+    buildCommand: npm ci --include=dev && npm run build
+
+    # `next build` with `output: 'export'` writes the site here.
+    staticPublishPath: ./out
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+    headers:
+      # Hashed build assets never change under the same name.
+      - path: /_next/static/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+
+    routes:
+      # The export emits directories (`contact/index.html`), so send the
+      # slash-less form to the canonical URL rather than relying on the host to
+      # resolve a directory index.
+      - type: redirect
+        source: /contact
+        destination: /contact/
+      - type: redirect
+        source: /resume
+        destination: /resume/
+
+      # Anything that is not a real file falls through to the 404 page rather
+      # than to Render's own error screen. Render matches real files first, so
+      # this never shadows the site's own assets.
+      - type: rewrite
+        source: /*
+        destination: /404.html
