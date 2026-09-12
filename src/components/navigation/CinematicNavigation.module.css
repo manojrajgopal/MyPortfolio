@@ -1,0 +1,170 @@
+.nav {
+  position: fixed;
+  top: clamp(1.1rem, 2.6vh, 2rem);
+  left: var(--gutter);
+  right: var(--gutter);
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  pointer-events: none;
+}
+
+.nav > * {
+  pointer-events: auto;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  position: relative;
+}
+
+.brand::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--c-copper);
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale 520ms var(--e-out);
+}
+
+.brand:hover::after {
+  scale: 1 1;
+}
+
+.toggle {
+  display: none;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.toggleMark {
+  width: 14px;
+  height: 1px;
+  background: var(--c-copper);
+  position: relative;
+  transition: transform 420ms var(--e-out);
+}
+
+.toggleMark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  transform: translateY(-4px);
+  transition: transform 420ms var(--e-out);
+}
+
+.toggleMarkOpen {
+  transform: rotate(45deg);
+}
+
+.toggleMarkOpen::after {
+  transform: rotate(90deg);
+}
+
+.list {
+  display: grid;
+  gap: 0.1rem;
+  justify-items: end;
+  text-align: right;
+}
+
+.chapter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.22rem 0;
+  opacity: 0.45;
+  transition: opacity var(--d-fast) var(--e-out);
+}
+
+.chapter:hover,
+.chapter:focus-visible,
+.chapter[data-current='true'] {
+  opacity: 1;
+}
+
+.chapterLabel {
+  font-family: var(--f-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-mid);
+  text-transform: uppercase;
+  color: var(--c-parchment);
+}
+
+/* The rule only draws itself on the chapter currently playing. */
+.chapterRule {
+  display: block;
+  width: clamp(1.2rem, 3vw, 2.4rem);
+  height: 1px;
+  background: var(--c-copper);
+  scale: 0 1;
+  transform-origin: right;
+  transition: scale 620ms var(--e-out);
+}
+
+.chapter[data-current='true'] .chapterRule {
+  scale: 1 1;
+}
+
+.routes {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--s-hairline);
+}
+
+.route {
+  position: relative;
+  color: var(--c-silver);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.route:hover {
+  color: var(--c-copper-lift);
+}
+
+@media (max-width: 860px) {
+  .toggle {
+    display: inline-flex;
+  }
+
+  .list {
+    position: absolute;
+    top: 2.6rem;
+    right: 0;
+    padding: 1rem 1.1rem;
+    background: var(--s-glass-lift);
+    border: 1px solid var(--s-hairline);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    opacity: 0;
+    translate: 0 -0.6rem;
+    visibility: hidden;
+    transition:
+      opacity 380ms var(--e-out),
+      translate 380ms var(--e-out),
+      visibility 0s linear 380ms;
+  }
+
+  .listOpen {
+    opacity: 1;
+    translate: 0 0;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .chapter {
+    opacity: 0.75;
+  }
+}

@@ -1,0 +1,60 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-cursor);
+  pointer-events: none;
+}
+
+.dot,
+.ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: -3px;
+  margin-top: -3px;
+  will-change: translate;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-ivory);
+  mix-blend-mode: difference;
+}
+
+.ring {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--c-copper);
+  transition:
+    width 420ms var(--e-out),
+    height 420ms var(--e-out),
+    margin 420ms var(--e-out),
+    opacity 300ms var(--e-out),
+    border-color 300ms var(--e-out);
+  opacity: 0.9;
+}
+
+/* Opens up over anything that can be interacted with. */
+.ring[data-active='true'] {
+  width: 44px;
+  height: 44px;
+  margin-left: -22px;
+  margin-top: -22px;
+  border-color: var(--c-copper-lift);
+  opacity: 1;
+}
+
+.ring[data-pressed='true'] {
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+  margin-top: -13px;
+}
+
+.ring[data-hidden='true'],
+.dot[data-hidden='true'] {
+  opacity: 0;
+}

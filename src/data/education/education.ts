@@ -1,0 +1,40 @@
+import type { EducationEntry } from '@/types/education';
+
+export const education: readonly EducationEntry[] = [
+  {
+    id: 'mca',
+    index: '01',
+    qualification: "Master's of Computer Applications",
+    abbreviation: 'MCA',
+    institution: 'Acharya Institutes',
+    location: 'Bangalore, India',
+    period: '02/2024 — 11/2025',
+    startYear: '2024',
+    endYear: '2025',
+    elevation: 1,
+  },
+  {
+    id: 'bca',
+    index: '02',
+    qualification: "Bachelor's of Computer Applications",
+    abbreviation: 'BCA',
+    institution: 'JSS College of Arts, Commerce and Science',
+    location: 'Mysore, Karnataka',
+    period: '05/2020 — 10/2023',
+    startYear: '2020',
+    endYear: '2023',
+    elevation: 0.74,
+  },
+  {
+    id: 'puc',
+    index: '03',
+    qualification: 'Pre-University (12th / PUC)',
+    abbreviation: 'PUC',
+    institution: 'Seshadripuram Pre-University College',
+    location: 'Tumkur, Karnataka',
+    period: '06/2018 — 04/2020',
+    startYear: '2018',
+    endYear: '2020',
+    elevation: 0.5,
+  },
+] as const;

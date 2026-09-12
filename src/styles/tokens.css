@@ -1,0 +1,106 @@
+/* ============================================================
+   Design tokens — an obsidian / copper / muted-emerald identity.
+   Deliberately no blue, no purple, no neon cyan.
+   ============================================================ */
+
+:root {
+  /* --- Ground: obsidian through graphite --- */
+  --c-void: #050506;
+  --c-obsidian: #08080a;
+  --c-graphite: #101114;
+  --c-ash: #17191d;
+  --c-stone: #23252a;
+  --c-edge: #32343a;
+
+  /* --- Ink: warm ivory through soft silver --- */
+  --c-ivory: #efe9de;
+  --c-parchment: #ddd6c8;
+  --c-silver: #9a9992;
+  --c-muted: #6c6b66;
+  --c-faint: #4a4a46;
+
+  /* --- Accent: burnished copper (primary) --- */
+  --c-copper: #b06b45;
+  --c-copper-lift: #d08a5c;
+  --c-copper-deep: #7a462b;
+  --c-ember: #e0a063;
+
+  /* --- Accent: champagne (typographic highlight) --- */
+  --c-champagne: #d9c9a8;
+  --c-bronze: #6b573f;
+
+  /* --- Accent: muted emerald (the technical / AI signal) --- */
+  --c-emerald: #4a7f68;
+  --c-emerald-lift: #6ea88c;
+  --c-forest: #0e1b16;
+
+  /* --- Surfaces --- */
+  --s-glass: rgba(23, 25, 29, 0.52);
+  --s-glass-lift: rgba(35, 37, 42, 0.66);
+  --s-hairline: rgba(239, 233, 222, 0.09);
+  --s-hairline-lift: rgba(239, 233, 222, 0.18);
+  --s-copper-veil: rgba(176, 107, 69, 0.14);
+  --s-emerald-veil: rgba(74, 127, 104, 0.12);
+
+  /* --- Type --- */
+  --f-display: var(--font-display), 'Sora', system-ui, sans-serif;
+  --f-body: var(--font-body), 'Inter', system-ui, sans-serif;
+  --f-serif: var(--font-serif), 'Instrument Serif', Georgia, serif;
+  --f-mono: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Fluid type scale */
+  --t-colossal: clamp(3.6rem, 13vw, 12rem);
+  --t-display: clamp(2.6rem, 7.4vw, 6.6rem);
+  --t-title: clamp(1.9rem, 4.2vw, 3.6rem);
+  --t-heading: clamp(1.3rem, 2.3vw, 2rem);
+  --t-body: clamp(0.95rem, 1.06vw, 1.08rem);
+  --t-small: clamp(0.8rem, 0.88vw, 0.9rem);
+  --t-meta: clamp(0.62rem, 0.72vw, 0.72rem);
+
+  /* Tracking */
+  --track-wide: 0.42em;
+  --track-mid: 0.24em;
+  --track-tight: -0.03em;
+
+  /* --- Space --- */
+  --gutter: clamp(1.25rem, 5vw, 6rem);
+  --rhythm: clamp(1rem, 2.4vw, 2.4rem);
+
+  /* --- Motion --- */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --e-drift: cubic-bezier(0.33, 1, 0.68, 1);
+  --d-fast: 220ms;
+  --d-mid: 520ms;
+  --d-slow: 1100ms;
+
+  /* --- Depth --- */
+  --z-canvas: 0;
+  --z-scroll: 10;
+  --z-overlay: 20;
+  --z-nav: 40;
+  --z-cursor: 90;
+  --z-loader: 100;
+
+  /* Per-section values written by the scroll engine each frame. */
+  --presence: 0;
+  --t: 0;
+}
+
+/* Accent resolution used by components that swap tone by context. */
+[data-accent='copper'] {
+  --accent: var(--c-copper);
+  --accent-lift: var(--c-copper-lift);
+}
+[data-accent='emerald'] {
+  --accent: var(--c-emerald);
+  --accent-lift: var(--c-emerald-lift);
+}
+[data-accent='champagne'] {
+  --accent: var(--c-champagne);
+  --accent-lift: var(--c-parchment);
+}
+[data-accent='silver'] {
+  --accent: var(--c-silver);
+  --accent-lift: var(--c-parchment);
+}

@@ -1,0 +1,173 @@
+import type { SceneId } from '@/types/scene';
+import { hex } from './palette';
+
+export interface LightRecipe {
+  readonly color: number;
+  readonly intensity: number;
+  readonly position: readonly [number, number, number];
+}
+
+/**
+ * One lighting + atmosphere recipe per chapter.
+ * The director interpolates between the recipes of adjacent chapters,
+ * so the world changes light as the camera travels rather than cutting.
+ */
+export interface EnvironmentRecipe {
+  readonly fog: number;
+  readonly fogDensity: number;
+  readonly background: number;
+  readonly ambient: { readonly color: number; readonly intensity: number };
+  readonly key: LightRecipe;
+  readonly fill: LightRecipe;
+  readonly rim: LightRecipe;
+  readonly exposure: number;
+}
+
+export const environments: Record<SceneId, EnvironmentRecipe> = {
+  /** Arrival: almost nothing. One distant warm source. */
+  intro: {
+    fog: hex.void,
+    fogDensity: 0.021,
+    background: hex.void,
+    ambient: { color: hex.stone, intensity: 0.22 },
+    key: { color: hex.ember, intensity: 1.5, position: [-14, 5, -20] },
+    fill: { color: hex.bronze, intensity: 0.3, position: [10, -4, 6] },
+    rim: { color: hex.parchment, intensity: 0.5, position: [4, 12, 14] },
+    exposure: 0.86,
+  },
+
+  /** Identity: the horizon opens, light warms. */
+  identity: {
+    fog: hex.obsidian,
+    fogDensity: 0.018,
+    background: hex.obsidian,
+    ambient: { color: hex.bronze, intensity: 0.34 },
+    key: { color: hex.ember, intensity: 2.1, position: [-18, 3, -14] },
+    fill: { color: hex.copperDeep, intensity: 0.46, position: [12, 2, 8] },
+    rim: { color: hex.champagne, intensity: 0.7, position: [0, 14, 16] },
+    exposure: 0.96,
+  },
+
+  /** Engineering: cooler, harder, architectural. */
+  engineering: {
+    fog: hex.graphite,
+    fogDensity: 0.02,
+    background: hex.graphite,
+    ambient: { color: hex.stone, intensity: 0.4 },
+    key: { color: hex.parchment, intensity: 1.6, position: [8, 16, 10] },
+    fill: { color: hex.copper, intensity: 0.72, position: [-14, -2, -6] },
+    rim: { color: hex.silver, intensity: 0.9, position: [-6, 6, -18] },
+    exposure: 0.92,
+  },
+
+  /** Experience: industrial corridor, bronze key. */
+  experience: {
+    fog: hex.ash,
+    fogDensity: 0.021,
+    background: hex.obsidian,
+    ambient: { color: hex.stone, intensity: 0.36 },
+    key: { color: hex.copperLift, intensity: 1.9, position: [10, 9, 6] },
+    fill: { color: hex.bronze, intensity: 0.55, position: [-12, 1, -10] },
+    rim: { color: hex.parchment, intensity: 0.66, position: [0, -8, -14] },
+    exposure: 0.94,
+  },
+
+  /** Projects: a laboratory. Neutral so each project can tint itself. */
+  projects: {
+    fog: hex.graphite,
+    fogDensity: 0.024,
+    background: hex.obsidian,
+    ambient: { color: hex.stone, intensity: 0.44 },
+    key: { color: hex.ivory, intensity: 1.5, position: [6, 12, 12] },
+    fill: { color: hex.copper, intensity: 0.62, position: [-14, 2, -4] },
+    rim: { color: hex.emerald, intensity: 0.5, position: [2, -10, -16] },
+    exposure: 0.98,
+  },
+
+  /** AI: the only chapter where emerald leads. */
+  ai: {
+    fog: hex.forest,
+    fogDensity: 0.026,
+    background: hex.void,
+    ambient: { color: hex.forest, intensity: 0.5 },
+    key: { color: hex.emeraldLift, intensity: 1.8, position: [-8, 6, 10] },
+    fill: { color: hex.emerald, intensity: 0.8, position: [12, -4, -8] },
+    rim: { color: hex.champagne, intensity: 0.42, position: [0, 14, -12] },
+    exposure: 0.9,
+  },
+
+  /** Skills: open space, low fog, starlight. */
+  skills: {
+    fog: hex.void,
+    fogDensity: 0.02,
+    background: hex.void,
+    ambient: { color: hex.stone, intensity: 0.3 },
+    key: { color: hex.champagne, intensity: 1.4, position: [0, 4, 18] },
+    fill: { color: hex.copper, intensity: 0.5, position: [-16, -6, -10] },
+    rim: { color: hex.emeraldLift, intensity: 0.44, position: [14, 10, -14] },
+    exposure: 1,
+  },
+
+  /** Education: hard architectural daylight through structures. */
+  education: {
+    fog: hex.ash,
+    fogDensity: 0.02,
+    background: hex.obsidian,
+    ambient: { color: hex.stone, intensity: 0.34 },
+    key: { color: hex.parchment, intensity: 1.7, position: [-4, 22, -2] },
+    fill: { color: hex.bronze, intensity: 0.44, position: [14, 2, 10] },
+    rim: { color: hex.copperLift, intensity: 0.6, position: [-16, 4, -16] },
+    exposure: 0.93,
+  },
+
+  /** Certifications: a vault. One focused source, deep falloff. */
+  certifications: {
+    fog: hex.void,
+    fogDensity: 0.03,
+    background: hex.void,
+    ambient: { color: hex.graphite, intensity: 0.2 },
+    key: { color: hex.champagne, intensity: 2.6, position: [0, 10, 8] },
+    fill: { color: hex.copperDeep, intensity: 0.5, position: [-10, -4, -6] },
+    rim: { color: hex.bronze, intensity: 0.5, position: [10, 2, -12] },
+    exposure: 0.88,
+  },
+
+  /** Achievement: a single object, a single light. */
+  achievement: {
+    fog: hex.void,
+    fogDensity: 0.034,
+    background: hex.void,
+    ambient: { color: hex.graphite, intensity: 0.16 },
+    key: { color: hex.emeraldLift, intensity: 2.4, position: [2, 5, 10] },
+    fill: { color: hex.copper, intensity: 0.7, position: [-8, -2, 4] },
+    rim: { color: hex.ivory, intensity: 0.9, position: [0, 8, -10] },
+    exposure: 0.9,
+  },
+
+  /** Languages: quiet, even, almost neutral. */
+  languages: {
+    fog: hex.obsidian,
+    fogDensity: 0.024,
+    background: hex.obsidian,
+    ambient: { color: hex.stone, intensity: 0.42 },
+    key: { color: hex.parchment, intensity: 1.3, position: [6, 6, 12] },
+    fill: { color: hex.bronze, intensity: 0.42, position: [-10, 0, -6] },
+    rim: { color: hex.champagne, intensity: 0.5, position: [0, 10, -14] },
+    exposure: 0.95,
+  },
+
+  /** Horizon: the last frame. Sunrise, simplified, open. */
+  final: {
+    fog: hex.copperDeep,
+    fogDensity: 0.013,
+    background: hex.obsidian,
+    // Low ambient on purpose: the light is behind the range, so the ranges
+    // themselves read as silhouettes and the closing titles stay legible
+    // against them.
+    ambient: { color: hex.bronze, intensity: 0.26 },
+    key: { color: hex.ember, intensity: 2.4, position: [0, 1.2, -26] },
+    fill: { color: hex.champagne, intensity: 0.35, position: [10, 6, 6] },
+    rim: { color: hex.copperLift, intensity: 0.7, position: [-12, 3, -8] },
+    exposure: 0.98,
+  },
+};

@@ -1,0 +1,175 @@
+/* ============================================================
+   Responsive — not a shrunken desktop.
+   Tablet reduces complexity; mobile gets its own composition.
+   ============================================================ */
+
+/* --- Tablet ---------------------------------------------------------
+   Chapters are fixed-height frames, so a two-column split has to survive
+   much further down than it would on a scrolling page: collapsing it
+   early stacks content taller than the frame and clips it.
+-------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  :root {
+    --gutter: clamp(1.25rem, 4.5vw, 3rem);
+    --track-wide: 0.3em;
+  }
+
+  .frame--split {
+    gap: clamp(1.2rem, 3.5vw, 2.4rem);
+  }
+
+  .stage {
+    padding-block: clamp(4.5rem, 10vh, 6.5rem);
+  }
+}
+
+@media (max-width: 760px) {
+  .frame--split {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(1rem, 3vw, 1.8rem);
+  }
+}
+
+/* --- Short viewports: the frame cannot grow, so the padding gives way --- */
+@media (max-height: 760px) {
+  .stage {
+    padding-block: clamp(3.2rem, 7vh, 4.5rem);
+  }
+}
+
+@media (max-height: 620px) {
+  :root {
+    --rhythm: clamp(0.6rem, 1.6vw, 1.2rem);
+  }
+
+  .stage {
+    padding-block: 2.8rem;
+  }
+}
+
+/* --- Mobile: a dedicated vertical composition ---------------------
+   Content aligns to the bottom third so the 3D world keeps the
+   upper frame. Type stays large; metadata stays small.
+------------------------------------------------------------------ */
+@media (max-width: 720px) {
+  /* Supporting prose that a phone frame has no room for. */
+  .hide-on-phone { display: none; }
+
+  :root {
+    --t-colossal: clamp(2.8rem, 17vw, 4.6rem);
+    --t-display: clamp(2.1rem, 11vw, 3.1rem);
+    --t-title: clamp(1.5rem, 7.2vw, 2.1rem);
+    --t-heading: clamp(1.12rem, 5vw, 1.4rem);
+    --t-meta: 0.62rem;
+    --rhythm: 1.1rem;
+  }
+
+  .stage {
+    align-items: flex-end;
+    padding-bottom: clamp(6rem, 16vh, 9rem);
+  }
+
+  .frame--right {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .type-body,
+  .type-lede {
+    max-width: 100%;
+  }
+
+  /* Hairline separators stack poorly at this width. */
+  .tokens {
+    gap: 0.35rem 0.7rem;
+  }
+
+  .tokens > * + *::before {
+    display: none;
+  }
+
+  .atmosphere {
+    opacity: 0.28;
+  }
+
+  .btn {
+    padding: 0.85rem 1.15rem;
+  }
+
+  /* Travel less: short viewports make large parallax feel like drift. */
+  .lane-near { translate: 0 calc(var(--t) * -3.2vh); }
+  .lane-mid { translate: 0 calc(var(--t) * -1.6vh); }
+  .lane-far { translate: 0 0; }
+}
+
+@media (max-width: 420px) {
+  .stage {
+    padding-inline: 1.1rem;
+  }
+}
+
+/* --- Short landscape phones --- */
+@media (max-height: 520px) and (orientation: landscape) {
+  .stage {
+    align-items: center;
+    padding-block: 3.5rem;
+  }
+
+  :root {
+    --t-colossal: clamp(2.2rem, 8vh, 3.4rem);
+    --t-display: clamp(1.8rem, 7vh, 2.6rem);
+  }
+}
+
+/* --- Coarse pointers never get the custom cursor --- */
+@media (hover: none), (pointer: coarse) {
+  .cursor-layer {
+    display: none;
+  }
+
+  html,
+  body,
+  .btn,
+  a,
+  button {
+    cursor: auto;
+  }
+}
+
+/* --- Reduced motion: the story survives, the movement does not --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal,
+  .reveal--rise,
+  .reveal--drift {
+    /* The frame still fades, but nothing travels or blurs. */
+    transform: none;
+    filter: none;
+  }
+
+  .lane-near,
+  .lane-mid,
+  .lane-far {
+    translate: none;
+  }
+
+  .atmosphere {
+    animation: none;
+    opacity: 0.18;
+  }
+
+  .split__unit,
+  .split--presence .split__unit {
+    transform: none;
+    opacity: 1;
+    animation: none;
+  }
+}

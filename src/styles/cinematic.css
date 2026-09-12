@@ -1,0 +1,414 @@
+/* ============================================================
+   Cinematic layer — scroll stage, atmosphere, surfaces, motion.
+   Every reveal is driven by --presence / --t, written per frame
+   by the scroll engine onto the section element.
+   ============================================================ */
+
+/* --- The persistent world behind everything --- */
+.world {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-canvas);
+  pointer-events: none;
+}
+
+.world canvas {
+  display: block;
+  touch-action: pan-y;
+}
+
+/* Film grain + vignette sit above the canvas, below content. */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  opacity: 0.42;
+  background-image: var(--grain-url);
+  background-size: 180px 180px;
+  animation: grain-drift 6s steps(6) infinite;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  background:
+    radial-gradient(122% 86% at 50% 46%, transparent 42%, rgba(5, 5, 6, 0.74) 100%),
+    linear-gradient(
+      to bottom,
+      rgba(5, 5, 6, 0.52) 0%,
+      transparent 22%,
+      transparent 76%,
+      rgba(5, 5, 6, 0.64) 100%
+    );
+}
+
+@keyframes grain-drift {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -2%); }
+  80% { transform: translate(3%, 1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* --- Scroll track: pure length, no content --------------------------
+   The track only makes the document tall enough to hold the film.
+   Nothing is drawn here, so scrolling never moves a layout — it moves
+   the camera, and the chapters dissolve into one another in place.
+-------------------------------------------------------------------- */
+.track {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  pointer-events: none;
+}
+
+.track__span {
+  width: 100%;
+}
+
+/* --- The frame every chapter is composed inside --- */
+.overlays {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-scroll);
+  pointer-events: none;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: clamp(4.5rem, 9vh, 7rem) var(--gutter);
+  overflow: hidden;
+  /* The frame itself dissolves. Individual elements only add travel on top,
+     so nothing in a chapter can stay on screen after the chapter ends. */
+  opacity: calc(var(--presence) * var(--presence));
+}
+
+.stage > * {
+  pointer-events: auto;
+}
+
+/* Composition modifiers: where in the frame a chapter sits. */
+.stage--bottom { align-items: flex-end; }
+.stage--top { align-items: flex-start; }
+/* Content keeps to the left half so a 3D set can hold the right. */
+.stage--left > * { max-width: min(100%, 56%); }
+
+@media (max-width: 900px) {
+  .stage--left > * { max-width: 100%; }
+}
+
+/* --- Presence-driven reveal primitives ------------------------------
+   --presence runs 0 -> 1 -> 0 across a scene window.
+   --t runs 0 -> 1 linearly. Content uses these instead of
+   registering scroll listeners of its own.
+-------------------------------------------------------------------- */
+
+.reveal {
+  transform: translate3d(0, calc((1 - var(--presence)) * 2.4rem), 0);
+  filter: blur(calc((1 - var(--presence)) * 7px));
+}
+
+.reveal--rise {
+  transform: translate3d(0, calc((1 - var(--presence)) * 5rem), 0)
+    scale(calc(0.97 + var(--presence) * 0.03));
+}
+
+.reveal--drift {
+  transform: translate3d(calc((1 - var(--presence)) * -3rem), 0, 0);
+}
+
+/* Parallax lanes: same presence, different travel. */
+.lane-near { translate: 0 calc(var(--t) * -7vh); }
+.lane-mid { translate: 0 calc(var(--t) * -3.5vh); }
+.lane-far { translate: 0 calc(var(--t) * -1.4vh); }
+
+/* --- Layout scaffolds --- */
+.frame {
+  width: 100%;
+  max-width: 1560px;
+  margin-inline: auto;
+  display: grid;
+  gap: var(--rhythm);
+}
+
+.frame--split {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 7rem);
+}
+
+.frame--offset {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+}
+
+.frame--right { justify-items: end; text-align: right; }
+.frame--center { justify-items: center; text-align: center; }
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm);
+  min-width: 0;
+}
+
+.stack--tight { gap: clamp(0.5rem, 1vw, 0.9rem); }
+.stack--loose { gap: clamp(1.6rem, 3.4vw, 3rem); }
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.6rem, 1.4vw, 1.4rem);
+  flex-wrap: wrap;
+}
+
+/* --- Section label: index + rule + name --- */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.label__rule {
+  display: block;
+  height: 1px;
+  width: clamp(2.2rem, 6vw, 5.5rem);
+  background: linear-gradient(to right, var(--c-copper), transparent);
+  transform-origin: left;
+  scale: var(--presence, 1) 1;
+}
+
+/* --- Hairline surfaces: depth without boxes --- */
+.surface {
+  position: relative;
+  background: linear-gradient(155deg, var(--s-glass-lift), var(--s-glass));
+  border: 1px solid var(--s-hairline);
+  backdrop-filter: blur(14px) saturate(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(115%);
+  box-shadow:
+    0 1px 0 0 rgba(239, 233, 222, 0.05) inset,
+    0 30px 70px -40px rgba(0, 0, 0, 0.92);
+  transform-style: preserve-3d;
+}
+
+/* A single lit edge — the expensive-material cue. */
+.surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    150deg,
+    rgba(224, 160, 99, 0.14) 0%,
+    transparent 32%,
+    transparent 72%,
+    rgba(74, 127, 104, 0.08) 100%
+  );
+  opacity: 0.7;
+  transition: opacity var(--d-mid) var(--e-out);
+}
+
+.surface:hover::before { opacity: 1; }
+
+/* --- Tilt cards: real perspective, restrained --- */
+.tilt {
+  --rx: 0deg;
+  --ry: 0deg;
+  --lift: 0px;
+  transform: perspective(1400px) rotateX(var(--rx)) rotateY(var(--ry))
+    translate3d(0, 0, var(--lift));
+  transition: transform var(--d-mid) var(--e-out);
+  will-change: transform;
+}
+
+.tilt__sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    46% 46% at var(--mx, 50%) var(--my, 50%),
+    rgba(239, 233, 222, 0.13),
+    transparent 72%
+  );
+  transition: opacity var(--d-mid) var(--e-out);
+}
+
+.tilt:hover .tilt__sheen { opacity: 1; }
+
+/* --- Tokens: type separated by hairlines, not pills --- */
+.tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0;
+  align-items: center;
+}
+
+.tokens > * + *::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 0.72em;
+  margin-inline: 0.85rem;
+  background: var(--s-hairline-lift);
+  vertical-align: -0.05em;
+}
+
+/* --- Buttons: magnetic, hairline, unfilled until touched --- */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.6rem;
+  font-family: var(--f-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-mid);
+  text-transform: uppercase;
+  color: var(--c-ivory);
+  background: transparent;
+  border: 1px solid var(--s-hairline-lift);
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out);
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, var(--c-copper-deep), var(--c-copper));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--d-mid) var(--e-in-out);
+  z-index: -1;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  border-color: var(--c-copper);
+}
+
+.btn:hover::after,
+.btn:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.btn--quiet { border-color: transparent; padding-inline: 0; }
+.btn--quiet::after { display: none; }
+.btn--quiet:hover { color: var(--c-copper-lift); }
+
+.btn__arrow { transition: transform var(--d-mid) var(--e-out); }
+.btn:hover .btn__arrow { transform: translateX(4px); }
+
+/* --- Focus: visible, on-brand, never a browser default --- */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 1px solid var(--c-copper-lift);
+  outline-offset: 4px;
+}
+
+/* --- Split text reveal --- */
+.split {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Room for descenders — the mask must not crop the type. */
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+
+.split__unit {
+  display: inline-block;
+  transform: translate3d(0, 110%, 0) rotate(3deg);
+  opacity: 0;
+  animation: split-in 1s var(--e-out) forwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes split-in {
+  to { transform: translate3d(0, 0, 0) rotate(0); opacity: 1; }
+}
+
+/* Presence-driven variant: the line performs when its chapter arrives,
+   not while the page is still showing the opening frame. */
+.split--presence .split__unit {
+  --shown: clamp(0, (var(--presence) - var(--i) * 0.028) * 5, 1);
+  animation: none;
+  opacity: var(--shown);
+  transform: translate3d(0, calc((1 - var(--shown)) * 110%), 0) rotate(0);
+}
+
+/* --- Cinematic beat words (BUILD / SOLVE / LEARN ...) --- */
+.beat {
+  font-family: var(--f-display);
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(239, 233, 222, 0.32);
+  white-space: nowrap;
+}
+
+.beat--filled {
+  color: var(--c-ivory);
+  -webkit-text-stroke: 0;
+}
+
+/* --- Utility --- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hairline {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right, var(--s-hairline-lift), transparent);
+}
+
+.copper { color: var(--c-copper); }
+.emerald { color: var(--c-emerald-lift); }
+.champagne { color: var(--c-champagne); }
+.ivory { color: var(--c-ivory); }
+.silver { color: var(--c-silver); }
+
+/* --- Route entrances -------------------------------------------------
+   Content is visible by default; the animation only adds movement. A page
+   can never be left blank because an animation failed to start.
+--------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation: enter-rise 900ms var(--e-out) backwards;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+}
+
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}

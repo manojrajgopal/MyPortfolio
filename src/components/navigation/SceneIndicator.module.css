@@ -1,0 +1,49 @@
+.indicator {
+  position: fixed;
+  right: var(--gutter);
+  bottom: clamp(1.2rem, 3vh, 2.2rem);
+  z-index: var(--z-nav);
+  display: flex;
+  align-items: flex-end;
+  gap: 0.9rem;
+  pointer-events: none;
+}
+
+.track {
+  position: relative;
+  width: 1px;
+  height: clamp(3.4rem, 9vh, 6rem);
+  background: var(--s-hairline-lift);
+  overflow: hidden;
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--c-copper-lift), var(--c-copper-deep));
+  transform-origin: top;
+  scale: 1 0;
+}
+
+.meta {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: end;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .indicator {
+    bottom: 0.9rem;
+    gap: 0.6rem;
+  }
+
+  .track {
+    height: 2.6rem;
+  }
+
+  /* Keep the chapter number and name; drop the rest. */
+  .meta > *:nth-child(3) {
+    display: none;
+  }
+}

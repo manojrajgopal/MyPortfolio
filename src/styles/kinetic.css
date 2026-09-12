@@ -1,0 +1,240 @@
+/* ============================================================
+   Kinetic type — scroll-scrubbed text choreography.
+
+   Every value below is derived from `--t`, the linear 0→1 position
+   inside the chapter that the engine writes onto the frame. Nothing
+   here is a timed animation: scrub the scroll back and the words
+   un-reveal exactly the way they arrived. That is what makes the
+   type feel cut to the camera rather than triggered by it.
+   ============================================================ */
+
+:root {
+  /* Published by the engine each frame. */
+  --velocity: 0;
+  --speed: 0;
+}
+
+.kinetic {
+  /* Window inside the chapter, set per instance. */
+  --from: 0;
+  --span: 0.34;
+  --stagger: 0.03;
+  --sharp: 4;
+
+  /* Reveal progress for this block. */
+  --p: clamp(0, (var(--t) - var(--from)) / var(--span), 1);
+
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* Each unit trails the one before it. */
+.kinetic__unit {
+  --u: clamp(0, (var(--p) - var(--i) * var(--stagger)) * var(--sharp), 1);
+  display: inline-block;
+  white-space: pre;
+  will-change: transform, opacity, filter;
+}
+
+/* Characters of one word never break apart across a line. */
+.kinetic__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* The mask a rising unit climbs out of. */
+.kinetic__mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.16em;
+  margin-bottom: -0.16em;
+}
+
+/* --- Exit: the block drifts and dissolves as the chapter closes --- */
+.kinetic[data-exit='true'] {
+  --x: clamp(0, (var(--t) - 0.74) / 0.26, 1);
+  transform: translate3d(0, calc(var(--x) * -1.7rem), 0);
+  filter: blur(calc(var(--x) * 7px));
+  opacity: calc(1 - var(--x));
+}
+
+/* --- Variants ------------------------------------------------------- */
+
+/* Rise out of a mask, with a little rotation on the way up. */
+.kinetic--rise .kinetic__unit {
+  transform: translate3d(0, calc((1 - var(--u)) * 118%), 0)
+    rotate(calc((1 - var(--u)) * 5deg));
+  opacity: calc(0.2 + var(--u) * 0.8);
+}
+
+/* Resolve out of defocus — the most cinematic of the set. */
+.kinetic--blur .kinetic__unit {
+  opacity: var(--u);
+  filter: blur(calc((1 - var(--u)) * 14px));
+  transform: translate3d(0, calc((1 - var(--u)) * 0.34em), 0)
+    scale(calc(0.94 + var(--u) * 0.06));
+}
+
+/* Arrive from behind the screen plane. */
+.kinetic--depth {
+  perspective: 900px;
+  perspective-origin: 50% 60%;
+}
+
+.kinetic--depth .kinetic__unit {
+  opacity: var(--u);
+  transform: translate3d(0, 0, calc((1 - var(--u)) * -320px))
+    rotateX(calc((1 - var(--u)) * -62deg));
+  transform-origin: 50% 100%;
+}
+
+/* Letters draw apart, then close into place. */
+.kinetic--stretch .kinetic__unit {
+  opacity: var(--u);
+  letter-spacing: calc((1 - var(--u)) * 0.42em);
+  filter: blur(calc((1 - var(--u)) * 7px));
+}
+
+/* A wipe travelling across each unit. */
+.kinetic--wipe .kinetic__unit {
+  clip-path: inset(0 calc((1 - var(--u)) * 102%) 0 0);
+  opacity: calc(0.12 + var(--u) * 0.88);
+}
+
+/* Outline that fills — used where a word should be felt before it is read. */
+.kinetic--fill .kinetic__unit {
+  position: relative;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(239, 233, 222, 0.34);
+}
+
+.kinetic--fill .kinetic__unit::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--c-ivory);
+  -webkit-text-stroke: 0;
+  opacity: var(--u);
+  clip-path: inset(calc((1 - var(--u)) * 100%) 0 0 0);
+}
+
+/* --- Load mode -------------------------------------------------------
+   The opening chapter is on screen before the visitor has scrolled, so its
+   type plays once on mount. One keyframe covers every variant: whatever the
+   scrub would have done, the load reveal overrides.
+--------------------------------------------------------------------- */
+.kinetic--load .kinetic__unit {
+  transform: none;
+  opacity: 0;
+  filter: none;
+  clip-path: none;
+  letter-spacing: inherit;
+  animation: kinetic-load 1s var(--e-out) both;
+  animation-delay: var(--unit-delay, 0ms);
+}
+
+.kinetic--load.kinetic--fill .kinetic__unit::after {
+  opacity: 1;
+  clip-path: none;
+}
+
+@keyframes kinetic-load {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.5em, 0);
+    filter: blur(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+/* --- Velocity: type leans into the direction of travel -------------- */
+.kinetic--lean {
+  transform: skewY(calc(var(--velocity) * 1.1deg))
+    translate3d(0, calc(var(--velocity) * -0.35rem), 0);
+}
+
+.kinetic--lean.kinetic[data-exit='true'] {
+  transform: skewY(calc(var(--velocity) * 1.1deg))
+    translate3d(0, calc(var(--x) * -1.7rem + var(--velocity) * -0.35rem), 0);
+}
+
+/* --- Paragraph sweep: a soft edge travels down a block of prose ----- */
+.text-sweep {
+  --from: 0.06;
+  --span: 0.42;
+  --p: clamp(0, (var(--t) - var(--from)) / var(--span), 1);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 calc(var(--p) * 118% - 12%),
+    transparent calc(var(--p) * 118%)
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 calc(var(--p) * 118% - 12%),
+    transparent calc(var(--p) * 118%)
+  );
+}
+
+/* --- A rule that draws itself across the chapter -------------------- */
+.draw-rule {
+  --from: 0.04;
+  --span: 0.3;
+  --p: clamp(0, (var(--t) - var(--from)) / var(--span), 1);
+  transform-origin: left;
+  scale: var(--p) 1;
+}
+
+/* --- Counters ------------------------------------------------------- */
+.counter {
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
+}
+
+/* --- Reduced motion: the words are simply there ---------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .kinetic,
+  .kinetic[data-exit='true'],
+  .kinetic--lean {
+    transform: none;
+    filter: none;
+    opacity: 1;
+  }
+
+  .kinetic--load .kinetic__unit {
+    animation: none;
+    opacity: 1;
+  }
+
+  .kinetic__unit {
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    letter-spacing: inherit !important;
+    clip-path: none !important;
+  }
+
+  .kinetic--fill .kinetic__unit {
+    color: var(--c-ivory);
+    -webkit-text-stroke: 0;
+  }
+
+  .kinetic--fill .kinetic__unit::after {
+    display: none;
+  }
+
+  .text-sweep {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .draw-rule {
+    scale: 1 1;
+  }
+}

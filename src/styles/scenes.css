@@ -1,0 +1,666 @@
+/* ============================================================
+   Chapter overlays — the typographic layer of the film.
+   Layout only; every reveal comes from --presence / --t.
+   ============================================================ */
+
+/* ---------- 01 Intro ---------- */
+.hero {
+  display: grid;
+  gap: clamp(1.4rem, 3vw, 2.6rem);
+  justify-items: start;
+  max-width: 1560px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.hero__name {
+  display: block;
+  line-height: 0.82;
+}
+
+.hero__statement {
+  max-width: 26ch;
+}
+
+.hero__meta {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(0.8rem, 2vw, 1.8rem);
+  flex-wrap: wrap;
+}
+
+.hero__scroll {
+  position: absolute;
+  left: var(--gutter);
+  bottom: clamp(1.6rem, 4vh, 2.6rem);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.hero__scrollTrack {
+  position: relative;
+  width: 1px;
+  height: 3.4rem;
+  background: var(--s-hairline-lift);
+  overflow: hidden;
+}
+
+.hero__scrollTrack::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 40%;
+  background: var(--c-copper);
+  animation: scroll-hint 2.4s var(--e-in-out) infinite;
+}
+
+@keyframes scroll-hint {
+  0% { transform: translateY(-100%); }
+  60%, 100% { transform: translateY(260%); }
+}
+
+/* ---------- 02 Identity ---------- */
+.beats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: clamp(0.8rem, 3vw, 2.6rem);
+}
+
+.beats__word {
+  position: relative;
+  display: inline-block;
+  font-size: clamp(1.6rem, 5.2vw, 4.2rem);
+}
+
+/* The outline is always there; the fill arrives on this word's beat. */
+.beats__word .beat--filled {
+  position: absolute;
+  inset: 0;
+  opacity: clamp(0, (var(--t) - var(--beat-at)) * 7, 1);
+}
+
+.identity__pair {
+  display: grid;
+  gap: 0.2rem;
+}
+
+/* ---------- 03 Engineering ---------- */
+.statement {
+  max-width: 18ch;
+}
+
+.statement em {
+  font-family: var(--f-serif);
+  font-style: italic;
+  color: var(--c-champagne);
+}
+
+.summary {
+  max-width: 52ch;
+  columns: 1;
+}
+
+/* ---------- 04 Experience ---------- */
+.timeline {
+  display: grid;
+  gap: clamp(0.7rem, 1.6vw, 1.4rem);
+  width: min(100%, 640px);
+}
+
+.role {
+  position: relative;
+  cursor: default;
+  padding: clamp(0.85rem, 1.8vw, 1.4rem);
+  display: grid;
+  gap: clamp(0.5rem, 1vw, 0.8rem);
+  text-align: left;
+  width: 100%;
+  transition: border-color var(--d-mid) var(--e-out);
+}
+
+.role .btn--quiet {
+  justify-self: start;
+}
+
+.role[data-open='true'] {
+  border-color: var(--c-copper-deep);
+}
+
+.role__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.role__company {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.role__detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 620ms var(--e-out);
+}
+
+.role[data-open='true'] .role__detail {
+  grid-template-rows: 1fr;
+}
+
+.role__detailInner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.role__list {
+  display: grid;
+  gap: 0.55rem;
+  padding-top: 0.9rem;
+}
+
+.role__list li {
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  gap: 0.6rem;
+  color: var(--c-silver);
+  font-size: var(--t-small);
+  line-height: 1.55;
+}
+
+.role__bullet {
+  color: var(--c-copper);
+  font-family: var(--f-mono);
+  font-size: var(--t-meta);
+  padding-top: 0.35em;
+}
+
+/* ---------- 05 Projects ----------
+   The chapter label holds its own row so it can never collide with a panel,
+   and all four panels stack in the row beneath it.
+----------------------------------- */
+.projects {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1560px;
+  margin-inline: auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  row-gap: clamp(0.8rem, 2vh, 1.6rem);
+  align-items: center;
+}
+
+.projects__label {
+  grid-row: 1;
+  align-self: start;
+}
+
+.project {
+  grid-row: 2;
+  grid-column: 1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+  align-content: center;
+  align-items: center;
+  gap: clamp(1.2rem, 4vw, 4rem);
+  opacity: calc(var(--presence) * var(--presence));
+  filter: blur(calc((1 - var(--presence)) * 8px));
+  translate: 0 calc((1 - var(--presence)) * 2.2rem);
+}
+
+.project__index {
+  --draw: clamp(0, (var(--t) - 0.06) * 5, 1);
+  font-size: clamp(3rem, 9vw, 7.5rem);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(176, 107, 69, 0.55);
+  font-family: var(--f-display);
+  font-weight: 200;
+  /* The numeral wipes upward as the camera reaches the station. */
+  clip-path: inset(calc((1 - var(--draw)) * 100%) 0 0 0);
+  opacity: calc(0.25 + var(--draw) * 0.75);
+  letter-spacing: calc((1 - var(--draw)) * 0.2em);
+}
+
+.motif__word {
+  --on: clamp(0, (var(--t) - var(--at)) * 8, 1);
+  opacity: calc(0.18 + var(--on) * 0.82);
+  transform: translate3d(calc((1 - var(--on)) * -0.5rem), 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project__index {
+    clip-path: none;
+    opacity: 1;
+    letter-spacing: normal;
+  }
+
+  .motif__word {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.project__title {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.project__aside {
+  display: grid;
+  gap: clamp(0.9rem, 2vw, 1.5rem);
+  justify-items: end;
+  text-align: right;
+}
+
+.metric {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: end;
+}
+
+/* Reserved for proportional figures only — never for a phrase. */
+.metric__value {
+  font-family: var(--f-display);
+  font-weight: 200;
+  font-size: clamp(2.8rem, 7vw, 5.4rem);
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: var(--c-copper-lift);
+}
+
+.project__description {
+  max-width: 40ch;
+}
+
+.project__facts {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: end;
+}
+
+.project__fact {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+
+.project__fact dd {
+  margin: 0;
+}
+
+.motif {
+  display: flex;
+  gap: clamp(0.6rem, 1.6vw, 1.2rem);
+  align-items: center;
+}
+
+.motif span {
+  font-family: var(--f-mono);
+  font-size: var(--t-meta);
+  letter-spacing: var(--track-mid);
+  color: var(--c-muted);
+}
+
+.motif span:first-child { color: var(--c-champagne); }
+
+/* ---------- 06 AI ---------- */
+.ai {
+  display: grid;
+  gap: clamp(1rem, 2.4vw, 1.8rem);
+  max-width: 34ch;
+}
+
+/* ---------- 07 Skills ---------- */
+.skills {
+  display: grid;
+  grid-template-columns: minmax(0, 0.62fr) minmax(0, 1fr);
+  gap: clamp(1.4rem, 4vw, 4rem);
+  align-items: center;
+  width: 100%;
+  max-width: 1560px;
+  margin-inline: auto;
+}
+
+.skills__groups {
+  display: grid;
+  gap: 0.1rem;
+  align-content: center;
+}
+
+.skills__group {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: baseline;
+  padding: clamp(0.28rem, 0.7vh, 0.5rem) 0.65rem;
+  border-left: 1px solid transparent;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background var(--d-fast) var(--e-out);
+  text-align: left;
+  width: 100%;
+}
+
+.skills__group:hover,
+.skills__group:focus-visible,
+.skills__group[data-active='true'] {
+  border-left-color: var(--accent, var(--c-copper));
+  background: linear-gradient(to right, rgba(239, 233, 222, 0.045), transparent 62%);
+}
+
+.skills__body {
+  display: grid;
+  gap: 0.16rem;
+  min-width: 0;
+}
+
+.skills__name {
+  font-family: var(--f-display);
+  font-weight: 350;
+  font-size: clamp(0.98rem, 1.5vw, 1.2rem);
+  line-height: 1.15;
+  color: var(--c-ivory);
+  letter-spacing: -0.01em;
+}
+
+.skills__names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0;
+}
+
+/* Reserved line: swapping the note must never reflow the list. */
+.skills__readout {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.skills__note {
+  min-height: 2.4em;
+  color: var(--c-muted);
+  font-family: var(--f-mono);
+  font-size: var(--t-meta);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.5;
+  max-width: 34ch;
+}
+
+/* ---------- 08 Education ---------- */
+.education {
+  display: grid;
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  width: min(100%, 720px);
+}
+
+.degree {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: clamp(0.8rem, 2vw, 1.6rem);
+  align-items: start;
+  padding-bottom: clamp(0.8rem, 2vw, 1.4rem);
+  border-bottom: 1px solid var(--s-hairline);
+}
+
+.degree__abbr {
+  font-family: var(--f-display);
+  font-weight: 250;
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  color: var(--c-champagne);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+/* ---------- 09 Certifications ----------
+   Held to the left half: the artifacts occupy the right of the frame, and
+   the two must not be stacked on top of each other.
+---------------------------------------- */
+.vault {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1.2vw, 0.9rem);
+  width: min(100%, 620px);
+}
+
+.credential {
+  display: grid;
+  gap: 0.5rem;
+  padding: clamp(0.9rem, 1.8vw, 1.3rem);
+  text-align: left;
+  width: 100%;
+  transition:
+    border-color var(--d-mid) var(--e-out),
+    transform var(--d-mid) var(--e-out);
+}
+
+.credential:hover,
+.credential:focus-visible {
+  border-color: var(--c-copper-deep);
+  transform: translateY(-4px);
+}
+
+.credential__focus {
+  color: var(--c-muted);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 560ms var(--e-out),
+    opacity 420ms var(--e-out);
+}
+
+.credential:hover .credential__focus,
+.credential:focus-visible .credential__focus,
+.credential[data-open='true'] .credential__focus {
+  max-height: 6rem;
+  opacity: 1;
+}
+
+/* ---------- 10 Achievement ----------
+   The seal turns in the upper half of the frame; the wording sits beneath it.
+------------------------------------- */
+.seal {
+  display: grid;
+  gap: clamp(0.5rem, 1.4vw, 0.9rem);
+  justify-items: center;
+  text-align: center;
+  padding-bottom: clamp(1rem, 5vh, 3rem);
+}
+
+.seal__line {
+  font-family: var(--f-display);
+  font-weight: 200;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  line-height: 1.3;
+}
+
+/* ---------- 11 Languages ---------- */
+.languages {
+  display: grid;
+  gap: clamp(0.7rem, 1.8vw, 1.2rem);
+  width: min(100%, 430px);
+}
+
+.language {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--s-hairline);
+}
+
+/* ---------- 12 Final ---------- */
+.final::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10%;
+  z-index: -1;
+  pointer-events: none;
+  /* The closing titles sit over a lit horizon; this keeps them readable
+     without darkening the sky itself. */
+  background: radial-gradient(
+    56% 48% at 50% 46%,
+    rgba(5, 5, 6, 0.72) 0%,
+    rgba(5, 5, 6, 0.42) 46%,
+    transparent 78%
+  );
+}
+
+.final {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: clamp(1.2rem, 3vw, 2.2rem);
+  justify-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.final__pair {
+  display: grid;
+  gap: 0.1rem;
+  justify-items: center;
+}
+
+.final__actions {
+  display: flex;
+  gap: clamp(0.6rem, 1.6vw, 1.2rem);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ---------- Responsive overrides for the overlays ---------- */
+@media (max-width: 900px) {
+  .project {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 1.1rem;
+  }
+
+  .project__aside,
+  .project__facts,
+  .metric {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .skills {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.2rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .vault {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero__scroll { display: none; }
+
+  /* Experience: the supporting paragraph gives way so both roles fit. */
+  .timeline { gap: 0.55rem; }
+
+  .role {
+    padding: 0.8rem 0.85rem;
+    gap: 0.45rem;
+  }
+
+  .role .type-heading { font-size: 1.02rem; }
+
+  /* Certifications: six credentials only fit as compact rows. */
+  .credential {
+    padding: 0.6rem 0.7rem;
+    gap: 0.25rem;
+  }
+
+  .credential .tokens { display: none; }
+  .credential__focus { display: none; }
+
+  .beats__word { font-size: clamp(1.3rem, 8vw, 2rem); }
+
+  .degree {
+    grid-template-columns: 3.2rem minmax(0, 1fr);
+  }
+
+  .vault {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.3rem;
+  }
+
+  .metric__value { font-size: clamp(2.2rem, 14vw, 3.4rem); }
+
+  .project__index { font-size: clamp(2.4rem, 16vw, 3.6rem); }
+}
+
+/* A card that arrives with its station rather than with the chapter. */
+.role--arrive {
+  --arrive: clamp(0, (var(--t) - var(--arrive-at)) * 6, 1);
+  opacity: var(--arrive);
+  transform: translate3d(calc((1 - var(--arrive)) * 2.4rem), 0, 0);
+  transition: border-color var(--d-mid) var(--e-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .role--arrive {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- Rows that arrive one after another as their chapter plays ------- */
+.skills__row,
+.credential--arrive,
+.degree--arrive,
+.language--arrive {
+  --on: clamp(0, (var(--t) - var(--at)) * 7, 1);
+  opacity: var(--on);
+  transform: translate3d(calc((1 - var(--on)) * -1.4rem), 0, 0);
+}
+
+.credential--arrive {
+  transform: translate3d(0, calc((1 - var(--on)) * 1.6rem), 0)
+    scale(calc(0.96 + var(--on) * 0.04));
+}
+
+.degree--arrive {
+  transform: translate3d(calc((1 - var(--on)) * -2.2rem), 0, 0);
+}
+
+/* The rule under each degree draws itself with the entry. */
+.degree--arrive {
+  border-bottom-color: transparent;
+  background-image: linear-gradient(to right, var(--s-hairline), var(--s-hairline));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: calc(var(--on) * 100%) 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skills__row,
+  .credential--arrive,
+  .degree--arrive,
+  .language--arrive {
+    opacity: 1;
+    transform: none;
+  }
+
+  .degree--arrive {
+    background-size: 100% 1px;
+  }
+}

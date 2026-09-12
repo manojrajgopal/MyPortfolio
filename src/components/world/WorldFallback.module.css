@@ -1,0 +1,51 @@
+.fallback {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-canvas);
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 96%, #14100d 0%, var(--c-obsidian) 46%, var(--c-void) 100%);
+  pointer-events: none;
+}
+
+/* A low warm source, roughly where the sun sits in the real scene. */
+.horizon {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  width: min(120vw, 1400px);
+  aspect-ratio: 2 / 1;
+  translate: -50% 0;
+  background: radial-gradient(
+    closest-side,
+    rgba(224, 160, 99, 0.34),
+    rgba(176, 107, 69, 0.12) 46%,
+    transparent 72%
+  );
+  animation: breathe 14s var(--e-drift) infinite alternate;
+}
+
+.ridge {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42%;
+  background: linear-gradient(to top, var(--c-void) 22%, transparent 100%);
+  clip-path: polygon(
+    0% 62%, 8% 44%, 16% 56%, 26% 30%, 34% 48%, 44% 26%, 53% 46%, 62% 34%,
+    71% 52%, 80% 38%, 90% 56%, 100% 42%, 100% 100%, 0% 100%
+  );
+}
+
+.haze {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(5, 5, 6, 0.66), transparent 34%, rgba(5, 5, 6, 0.5));
+}
+
+@keyframes breathe {
+  from { opacity: 0.75; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horizon { animation: none; }
+}

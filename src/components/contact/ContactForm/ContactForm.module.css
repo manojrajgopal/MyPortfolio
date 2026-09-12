@@ -1,0 +1,55 @@
+.form {
+  display: grid;
+  gap: clamp(0.8rem, 2vw, 1.2rem);
+  width: min(100%, 460px);
+}
+
+.field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  background: rgba(23, 25, 29, 0.5);
+  border: 1px solid var(--s-hairline);
+  color: var(--c-ivory);
+  font-family: var(--f-body);
+  font-size: var(--t-small);
+  line-height: 1.5;
+  transition:
+    border-color var(--d-fast) var(--e-out),
+    background var(--d-fast) var(--e-out);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--c-faint);
+}
+
+.input:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--c-copper);
+  background: rgba(35, 37, 42, 0.6);
+}
+
+.input:focus-visible,
+.textarea:focus-visible {
+  outline: 1px solid var(--c-copper-lift);
+  outline-offset: 2px;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+.actions {
+  display: grid;
+  gap: 0.7rem;
+  justify-items: start;
+  margin-top: 0.3rem;
+}
