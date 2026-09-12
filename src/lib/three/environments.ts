@@ -24,16 +24,24 @@ export interface EnvironmentRecipe {
 }
 
 export const environments: Record<SceneId, EnvironmentRecipe> = {
-  /** Arrival: almost nothing. One distant warm source. */
+  /**
+   * Arrival: a dark chamber holding one source of light.
+   *
+   * The orb is the only emitter in the frame, so the room around it is pulled
+   * down hard — low ambient, a dim fill, and fog warmed toward the orb's own
+   * colour so the air it hangs in looks lit by it. The key stays modest for
+   * the same reason: a strong directional flattens the shells and makes the
+   * orb read as a lit object rather than as the thing doing the lighting.
+   */
   intro: {
-    fog: hex.void,
-    fogDensity: 0.021,
+    fog: 0x120a06,
+    fogDensity: 0.023,
     background: hex.void,
-    ambient: { color: hex.stone, intensity: 0.22 },
-    key: { color: hex.ember, intensity: 1.5, position: [-14, 5, -20] },
-    fill: { color: hex.bronze, intensity: 0.3, position: [10, -4, 6] },
-    rim: { color: hex.parchment, intensity: 0.5, position: [4, 12, 14] },
-    exposure: 0.86,
+    ambient: { color: hex.copperDeep, intensity: 0.16 },
+    key: { color: hex.ember, intensity: 0.85, position: [-12, 4, -16] },
+    fill: { color: hex.bronze, intensity: 0.22, position: [10, -4, 6] },
+    rim: { color: hex.champagne, intensity: 0.34, position: [4, 12, 14] },
+    exposure: 0.92,
   },
 
   /** Identity: the horizon opens, light warms. */
