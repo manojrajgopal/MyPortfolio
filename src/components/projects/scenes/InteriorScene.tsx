@@ -8,6 +8,7 @@ import { createDissolveMaterial, setDissolve, type DissolveMaterial } from '@/li
 import { getScrollEngine } from '@/lib/scroll/engineSingleton';
 import { clamp, mapRange, smoothstep } from '@/lib/utils/clamp';
 import { gridTexture } from '@/lib/three/textures';
+import { useThemeHex } from '@/hooks/useResolvedTheme';
 import { FloorLamp, Plant, Rug, Shelf, Sofa, Table } from './RoomFurniture';
 
 interface InteriorSceneProps {
@@ -41,6 +42,13 @@ export function InteriorScene({
   reducedMotion,
 }: InteriorSceneProps): React.JSX.Element {
   const engine = getScrollEngine();
+
+  // The shell is the one part of this set that must follow the theme. Dark
+  // walls disappear into dark fog; on paper the same walls read as a grey box
+  // floating in nothing, because the room has no exterior.
+  const floorColor = useThemeHex(hex.obsidian, 0xd9d3c6);
+  const wallColor = useThemeHex(hex.graphite, 0xe8e3d8);
+
   const beforeGroup = useRef<Group>(null);
   const afterGroup = useRef<Group>(null);
   const scanner = useRef<Mesh>(null);
@@ -106,7 +114,7 @@ export function InteriorScene({
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[9, 7]} />
         <meshStandardMaterial
-          color={hex.obsidian}
+          color={floorColor}
           roughness={0.86}
           metalness={0.14}
           map={gridTexture(512, 42)}
@@ -114,11 +122,11 @@ export function InteriorScene({
       </mesh>
       <mesh position={[0, 2.2, -3.5]}>
         <planeGeometry args={[9, 4.4]} />
-        <meshStandardMaterial color={hex.graphite} roughness={0.84} metalness={0.1} />
+        <meshStandardMaterial color={wallColor} roughness={0.84} metalness={0.1} />
       </mesh>
       <mesh position={[-4.5, 2.2, 0]} rotation={[0, Math.PI / 2, 0]}>
         <planeGeometry args={[7, 4.4]} />
-        <meshStandardMaterial color={hex.graphite} roughness={0.84} metalness={0.1} />
+        <meshStandardMaterial color={wallColor} roughness={0.84} metalness={0.1} />
       </mesh>
 
       {/* A window on the back wall — the source of the warm light.

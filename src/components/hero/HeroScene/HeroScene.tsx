@@ -1,5 +1,7 @@
 'use client';
 
+import { useThree } from '@react-three/fiber';
+
 import { CELL_Z } from '@/lib/three/cameraRig';
 import { hex } from '@/lib/three/palette';
 import { scaleCount, type PerformanceProfile } from '@/lib/three/performance';
@@ -23,10 +25,30 @@ interface HeroSceneProps {
 export function HeroScene({ profile, reducedMotion }: HeroSceneProps): React.JSX.Element {
   const z = CELL_Z.intro;
 
+  /**
+   * The artifact is held right of the name on a wide frame. A portrait frame
+   * is far narrower in world units, so the same offset puts it outside the
+   * shot entirely — it centres instead, and rises above the type, which sits
+   * at the bottom of the frame on a phone.
+   */
+  const { width, height } = useThree((state) => state.size);
+  const portrait = Math.max(0, Math.min(1, (1.05 - width / Math.max(1, height)) / 0.55));
+  const offsetX = 3.4 * (1 - portrait);
+  const offsetY = 1.5 + portrait * 1.3;
+
+  /**
+   * A portrait frame sees far more of the world vertically, so the ranges
+   * that sit politely along the horizon on a wide screen climb into the
+   * middle of the shot and swallow the type beneath it. They drop away, and
+   * the artifact gives back a little scale.
+   */
+  const ridgeDrop = portrait * 7;
+  const artifactScale = 1 - portrait * 0.22;
+
   return (
     <group position={[0, 0, z]}>
       {/* Held up and to the right: the name owns the left of the frame. */}
-      <group position={[3.4, 1.5, 0]}>
+      <group position={[offsetX, offsetY, 0]} scale={artifactScale}>
         <HeroArtifact
           shardCount={scaleCount(140, profile, 32)}
           detail={profile.tier === 'low' ? 0 : 1}
@@ -53,7 +75,7 @@ export function HeroScene({ profile, reducedMotion }: HeroSceneProps): React.JSX
         height={8}
         seed={11}
         color={hex.obsidian}
-        position={[0, -8, -18]}
+        position={[0, -8 - ridgeDrop, -18]}
       />
       <Ridgeline
         width={200}
@@ -62,7 +84,7 @@ export function HeroScene({ profile, reducedMotion }: HeroSceneProps): React.JSX
         height={14}
         seed={29}
         color={hex.graphite}
-        position={[0, -10, -32]}
+        position={[0, -10 - ridgeDrop * 1.2, -32]}
       />
 
       <DustField

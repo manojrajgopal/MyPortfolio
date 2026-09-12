@@ -116,6 +116,12 @@
   scale: 1 1;
 }
 
+.themeRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.7rem;
+}
+
 .routes {
   display: flex;
   gap: 1rem;
@@ -134,7 +140,7 @@
   color: var(--c-copper-lift);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1180px) {
   .toggle {
     display: inline-flex;
   }

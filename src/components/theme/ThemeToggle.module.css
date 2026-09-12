@@ -1,0 +1,30 @@
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px;
+  border: 1px solid var(--s-hairline);
+  background: var(--s-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.option {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 22px;
+  color: var(--c-muted);
+  transition:
+    color var(--d-fast) var(--e-out),
+    background var(--d-fast) var(--e-out);
+}
+
+.option:hover {
+  color: var(--c-parchment);
+}
+
+.option[data-active='true'] {
+  color: var(--c-copper-lift);
+  background: var(--s-copper-veil);
+}

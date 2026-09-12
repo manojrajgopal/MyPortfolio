@@ -1,7 +1,12 @@
 import { Color, Vector3 } from 'three';
 import { sceneWindows } from '@/data/navigation/scenes';
 import type { SceneId } from '@/types/scene';
-import { environments, type EnvironmentRecipe, type LightRecipe } from './environments';
+import {
+  environments,
+  lightEnvironments,
+  type EnvironmentRecipe,
+  type LightRecipe,
+} from './environments';
 import { smoothstep } from '@/lib/utils/clamp';
 
 export interface ResolvedLight {
@@ -70,9 +75,18 @@ function blendHex(out: Color, a: number, b: number, t: number): void {
 
 /**
  * Sample the continuous lighting curve at a scroll position.
- * Finds the two nearest chapter anchors and eases between their recipes.
+ *
+ * Finds the two nearest chapter anchors and eases between their recipes, then
+ * blends the dark and light worlds by `lightness` (0–1). Because the blend is
+ * a continuous value rather than a switch, changing theme mid-scroll is a
+ * dissolve rather than a cut — the director eases `lightness` and every fog
+ * colour, light and exposure follows it.
  */
-export function sampleEnvironment(progress: number, out: ResolvedEnvironment): ResolvedEnvironment {
+export function sampleEnvironment(
+  progress: number,
+  out: ResolvedEnvironment,
+  lightness = 0,
+): ResolvedEnvironment {
   let lower = anchors[0]!;
   let upper = anchors[anchors.length - 1]!;
 
@@ -99,8 +113,13 @@ export function sampleEnvironment(progress: number, out: ResolvedEnvironment): R
   const span = upper.at - lower.at;
   const t = span <= 0 ? 0 : smoothstep(0, 1, (progress - lower.at) / span);
 
-  const a: EnvironmentRecipe = environments[lower.id];
-  const b: EnvironmentRecipe = environments[upper.id];
+  const set = lightness > 0.5 ? lightEnvironments : environments;
+  const other = lightness > 0.5 ? environments : lightEnvironments;
+  // How far toward `set` we are, once the sets have been chosen.
+  const mix = lightness > 0.5 ? (lightness - 0.5) * 2 : (0.5 - lightness) * 2;
+
+  const a = blendRecipe(other[lower.id], set[lower.id], mix, scratchLower);
+  const b = blendRecipe(other[upper.id], set[upper.id], mix, scratchUpper);
 
   blendHex(out.fog, a.fog, b.fog, t);
   blendHex(out.background, a.background, b.background, t);
@@ -114,4 +133,72 @@ export function sampleEnvironment(progress: number, out: ResolvedEnvironment): R
   blendLight(out.rim, a.rim, b.rim, t);
 
   return out;
+}
+
+/** Mutable scratch recipes so the theme blend never allocates per frame. */
+type MutableRecipe = {
+  fog: number;
+  fogDensity: number;
+  background: number;
+  ambient: { color: number; intensity: number };
+  key: { color: number; intensity: number; position: [number, number, number] };
+  fill: { color: number; intensity: number; position: [number, number, number] };
+  rim: { color: number; intensity: number; position: [number, number, number] };
+  exposure: number;
+};
+
+function emptyRecipe(): MutableRecipe {
+  const light = () => ({ color: 0, intensity: 0, position: [0, 0, 0] as [number, number, number] });
+  return {
+    fog: 0,
+    fogDensity: 0,
+    background: 0,
+    ambient: { color: 0, intensity: 0 },
+    key: light(),
+    fill: light(),
+    rim: light(),
+    exposure: 1,
+  };
+}
+
+const scratchLower = emptyRecipe();
+const scratchUpper = emptyRecipe();
+const mixA = new Color();
+const mixB = new Color();
+
+function mixHex(a: number, b: number, t: number): number {
+  mixA.setHex(a);
+  mixB.setHex(b);
+  return mixA.lerp(mixB, t).getHex();
+}
+
+function mixLight(
+  out: MutableRecipe['key'],
+  a: LightRecipe,
+  b: LightRecipe,
+  t: number,
+): void {
+  out.color = mixHex(a.color, b.color, t);
+  out.intensity = a.intensity + (b.intensity - a.intensity) * t;
+  out.position[0] = a.position[0] + (b.position[0] - a.position[0]) * t;
+  out.position[1] = a.position[1] + (b.position[1] - a.position[1]) * t;
+  out.position[2] = a.position[2] + (b.position[2] - a.position[2]) * t;
+}
+
+function blendRecipe(
+  a: EnvironmentRecipe,
+  b: EnvironmentRecipe,
+  t: number,
+  out: MutableRecipe,
+): EnvironmentRecipe {
+  out.fog = mixHex(a.fog, b.fog, t);
+  out.background = mixHex(a.background, b.background, t);
+  out.fogDensity = a.fogDensity + (b.fogDensity - a.fogDensity) * t;
+  out.ambient.color = mixHex(a.ambient.color, b.ambient.color, t);
+  out.ambient.intensity = a.ambient.intensity + (b.ambient.intensity - a.ambient.intensity) * t;
+  out.exposure = a.exposure + (b.exposure - a.exposure) * t;
+  mixLight(out.key, a.key, b.key, t);
+  mixLight(out.fill, a.fill, b.fill, t);
+  mixLight(out.rim, a.rim, b.rim, t);
+  return out as EnvironmentRecipe;
 }

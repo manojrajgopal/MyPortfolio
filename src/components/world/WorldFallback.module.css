@@ -3,7 +3,12 @@
   inset: 0;
   z-index: var(--z-canvas);
   overflow: hidden;
-  background: radial-gradient(120% 90% at 50% 96%, #14100d 0%, var(--c-obsidian) 46%, var(--c-void) 100%);
+  background: radial-gradient(
+    120% 90% at 50% 96%,
+    var(--s-fallback-core) 0%,
+    var(--c-obsidian) 46%,
+    var(--c-void) 100%
+  );
   pointer-events: none;
 }
 
@@ -17,8 +22,8 @@
   translate: -50% 0;
   background: radial-gradient(
     closest-side,
-    rgba(224, 160, 99, 0.34),
-    rgba(176, 107, 69, 0.12) 46%,
+    var(--s-fallback-glow),
+    var(--s-fallback-halo) 46%,
     transparent 72%
   );
   animation: breathe 14s var(--e-drift) infinite alternate;
@@ -38,7 +43,7 @@
 .haze {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(5, 5, 6, 0.66), transparent 34%, rgba(5, 5, 6, 0.5));
+  background: linear-gradient(to bottom, var(--vignette-top), transparent 34%, var(--vignette-bottom));
 }
 
 @keyframes breathe {

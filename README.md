@@ -79,6 +79,35 @@ Six variants — `rise`, `blur`, `depth`, `stretch`, `wipe`, `fill` — plus:
 nested inside one project counts up when *that station* arrives rather than
 when the chapter opens.
 
+### Theme
+
+Light, dark and system, with the choice persisted and the OS followed when
+"system" is selected. It is not a background swap: the 3D world changes with
+the document.
+
+- `themeStore.ts` is a singleton, for the same reason the scroll engine is —
+  the WebGL tree cannot see React context. **Reads are pure.** An earlier
+  version notified subscribers from `getResolved()`, which meant a read during
+  one component's render set state in another and tore down the WebGL tree.
+- A tiny inline script in `<head>` sets the attribute before first paint, so
+  there is no flash of the wrong palette.
+- The light palette is its own composition — warm paper, graphite ink, copper
+  pulled darker to hold contrast — not an inversion of the dark one. Every
+  token clears WCAG AA against the brightest backdrop in the world (lowest is
+  copper at 5.24:1).
+- The world derives its light recipes from the dark ones
+  (`toLightRecipe`) rather than maintaining twelve of each, and the director
+  blends the two sets by a damped `lightness` value, so switching theme
+  mid-scroll is a dissolve rather than a cut.
+- Three things the light theme needs that the dark one does not, all handled
+  centrally in the director: emissive materials go back through tone mapping
+  (they opt out to stay hot on black, and blow to white on paper), fresnel
+  rims scale down via a dedicated `uRimScale` uniform so scene animation is
+  never fought, and reflection strength is decoupled from ambient.
+- Enclosed sets — the interior room, the vault, the education ground — take
+  their surface colours from `useThemeHex`. A dark wall vanishes into dark
+  fog; on paper the same wall is a grey box floating in nothing.
+
 ### Materials
 
 Metal is almost entirely reflection, so a `metalness: 0.9` surface with
@@ -174,6 +203,14 @@ canvas is `aria-hidden`.
   animated headlines costs no JavaScript per frame.
 - Where WebGL is unavailable, `WorldFallback` renders a lit horizon in CSS.
   Never a broken canvas.
+
+### Portrait
+
+A phone is not a narrow desktop. The camera dollies in slightly (kept modest,
+since some scenes also recentre their subject and the two compound), the hero
+artifact centres and rises above the type instead of sitting right of it, the
+ranges drop below the frame, and a theme-aware scrim guarantees the type reads
+over whatever the world is doing behind it.
 
 ---
 

@@ -2,8 +2,18 @@ import { MeshStandardMaterial, type WebGLProgramParametersWithUniforms } from 't
 import { hex } from './palette';
 
 export interface RimUniforms {
-  /** Strength of the edge light. */
+  /** Strength of the edge light, animated freely by the owning scene. */
   uRim: { value: number };
+  /**
+   * Theme multiplier applied on top of `uRim`.
+   *
+   * Kept as a separate uniform so the scene-graded theme pass and the scene's
+   * own per-frame animation never fight over one value. A fresnel rim adds
+   * light at the silhouette, which reads as a highlight on a dark ground and
+   * as a blown-out sparkle on a pale one — so the light theme scales it down
+   * without the scene needing to know the theme exists.
+   */
+  uRimScale: { value: number };
   /** How tightly the rim hugs the silhouette. Higher is thinner. */
   uRimPower: { value: number };
   uRimColor: { value: [number, number, number] };
@@ -57,6 +67,7 @@ export function createRimMaterial(params: RimParams = {}): RimMaterial {
 
   const uniforms: RimUniforms = {
     uRim: { value: params.rim ?? 0.7 },
+    uRimScale: { value: 1 },
     uRimPower: { value: params.rimPower ?? 2.6 },
     uRimColor: { value: rgb(params.rimColor ?? hex.copperLift) },
     uSheen: { value: params.sheen ?? 0 },
@@ -66,6 +77,7 @@ export function createRimMaterial(params: RimParams = {}): RimMaterial {
 
   material.onBeforeCompile = (shader: WebGLProgramParametersWithUniforms) => {
     shader.uniforms.uRim = uniforms.uRim;
+    shader.uniforms.uRimScale = uniforms.uRimScale;
     shader.uniforms.uRimPower = uniforms.uRimPower;
     shader.uniforms.uRimColor = uniforms.uRimColor;
     shader.uniforms.uSheen = uniforms.uSheen;
@@ -96,6 +108,7 @@ export function createRimMaterial(params: RimParams = {}): RimMaterial {
          varying vec3 vRimNormal;
          varying float vRimHeight;
          uniform float uRim;
+         uniform float uRimScale;
          uniform float uRimPower;
          uniform vec3 uRimColor;
          uniform float uSheen;
@@ -106,7 +119,7 @@ export function createRimMaterial(params: RimParams = {}): RimMaterial {
         `#include <dithering_fragment>
          vec3 rimView = normalize(vRimView);
          float facing = 1.0 - clamp(dot(normalize(vRimNormal), rimView), 0.0, 1.0);
-         float rim = pow(facing, uRimPower) * uRim;
+         float rim = pow(facing, uRimPower) * uRim * uRimScale;
          gl_FragColor.rgb += uRimColor * rim;
 
          if (uSheen > 0.0) {

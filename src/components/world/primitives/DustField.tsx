@@ -7,11 +7,13 @@ import {
   BufferAttribute,
   BufferGeometry,
   Color,
+  NormalBlending,
   ShaderMaterial,
   type FogExp2,
   type Points as PointsObject,
 } from 'three';
 import { softSprite } from '@/lib/three/textures';
+import { getThemeStore } from '@/lib/theme/themeStore';
 
 interface DustFieldProps {
   readonly count: number;
@@ -23,6 +25,12 @@ interface DustFieldProps {
   /** Vertical drift speed, world units per second. */
   readonly rise?: number;
   readonly still?: boolean;
+  /**
+   * Colour the motes take in the light theme. Additive white on a pale ground
+   * is invisible, so the light world darkens its dust and blends normally —
+   * specks of suspended dust, which is what they are.
+   */
+  readonly lightColor?: number;
 }
 
 const VERTEX = /* glsl */ `
@@ -91,8 +99,11 @@ export function DustField({
   opacity = 0.5,
   rise = 0.22,
   still = false,
+  lightColor = 0x6b6254,
 }: DustFieldProps): React.JSX.Element {
   const points = useRef<PointsObject>(null);
+  const themeStore = getThemeStore();
+  const appliedTheme = useRef<string | null>(null);
 
   const geometry = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -137,6 +148,17 @@ export function DustField({
   );
 
   useFrame((state) => {
+    // Follow the theme: additive white motes vanish on a pale ground.
+    const theme = themeStore.getResolved();
+    if (theme !== appliedTheme.current) {
+      appliedTheme.current = theme;
+      const isLight = theme === 'light';
+      (material.uniforms.uColor!.value as Color).setHex(isLight ? lightColor : color);
+      material.uniforms.uOpacity!.value = isLight ? opacity * 0.72 : opacity;
+      material.blending = isLight ? NormalBlending : AdditiveBlending;
+      material.needsUpdate = true;
+    }
+
     // Track the director's fog even when the motes themselves are frozen.
     const fog = state.scene.fog;
     if (fog && 'density' in fog) {

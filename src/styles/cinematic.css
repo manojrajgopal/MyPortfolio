@@ -24,7 +24,7 @@
   z-index: 5;
   pointer-events: none;
   mix-blend-mode: soft-light;
-  opacity: 0.42;
+  opacity: var(--grain-opacity);
   background-image: var(--grain-url);
   background-size: 180px 180px;
   animation: grain-drift 6s steps(6) infinite;
@@ -36,13 +36,13 @@
   z-index: 6;
   pointer-events: none;
   background:
-    radial-gradient(122% 86% at 50% 46%, transparent 42%, rgba(5, 5, 6, 0.74) 100%),
+    radial-gradient(122% 86% at 50% 46%, transparent 42%, var(--vignette-edge) 100%),
     linear-gradient(
       to bottom,
-      rgba(5, 5, 6, 0.52) 0%,
+      var(--vignette-top) 0%,
       transparent 22%,
       transparent 76%,
-      rgba(5, 5, 6, 0.64) 100%
+      var(--vignette-bottom) 100%
     );
 }
 
@@ -194,8 +194,8 @@
   backdrop-filter: blur(14px) saturate(115%);
   -webkit-backdrop-filter: blur(14px) saturate(115%);
   box-shadow:
-    0 1px 0 0 rgba(239, 233, 222, 0.05) inset,
-    0 30px 70px -40px rgba(0, 0, 0, 0.92);
+    0 1px 0 0 var(--s-inset) inset,
+    0 30px 70px -40px var(--s-shadow);
   transform-style: preserve-3d;
 }
 
@@ -207,10 +207,10 @@
   pointer-events: none;
   background: linear-gradient(
     150deg,
-    rgba(224, 160, 99, 0.14) 0%,
+    var(--s-warm-veil) 0%,
     transparent 32%,
     transparent 72%,
-    rgba(74, 127, 104, 0.08) 100%
+    var(--s-cool-veil) 100%
   );
   opacity: 0.7;
   transition: opacity var(--d-mid) var(--e-out);
@@ -236,7 +236,7 @@
   opacity: 0;
   background: radial-gradient(
     46% 46% at var(--mx, 50%) var(--my, 50%),
-    rgba(239, 233, 222, 0.13),
+    var(--s-sheen),
     transparent 72%
   );
   transition: opacity var(--d-mid) var(--e-out);
@@ -355,7 +355,7 @@
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(239, 233, 222, 0.32);
+  -webkit-text-stroke: 1px var(--s-stroke);
   white-space: nowrap;
 }
 

@@ -1,6 +1,11 @@
 /* ============================================================
    Design tokens — an obsidian / copper / muted-emerald identity.
    Deliberately no blue, no purple, no neon cyan.
+
+   Dark is the default and lives on :root. The light theme is not an
+   inversion of it — inverting a cinematic dark palette gives you grey
+   mud. It is its own composition: warm paper, graphite ink, and the
+   same copper reading darker so it still carries contrast.
    ============================================================ */
 
 :root {
@@ -85,6 +90,90 @@
   /* Per-section values written by the scroll engine each frame. */
   --presence: 0;
   --t: 0;
+
+  /* Atmosphere strength, dialled back in the light theme where grain and
+     vignette read as dirt rather than as film. */
+  --grain-opacity: 0.42;
+  --vignette-top: rgba(5, 5, 6, 0.52);
+  --vignette-bottom: rgba(5, 5, 6, 0.64);
+  --vignette-edge: rgba(5, 5, 6, 0.74);
+
+  /* Shadow colour, so surfaces cast something believable in both themes. */
+  --s-shadow: rgba(0, 0, 0, 0.92);
+  --s-inset: rgba(239, 233, 222, 0.05);
+  --s-sheen: rgba(239, 233, 222, 0.13);
+  --s-warm-veil: rgba(224, 160, 99, 0.14);
+  --s-cool-veil: rgba(74, 127, 104, 0.08);
+  --s-stroke: rgba(239, 233, 222, 0.32);
+  --s-project-stroke: rgba(176, 107, 69, 0.55);
+  --s-row-wash: rgba(239, 233, 222, 0.045);
+  --s-scrim-core: rgba(5, 5, 6, 0.72);
+  --s-scrim-edge: rgba(5, 5, 6, 0.42);
+  --s-fallback-core: #14100d;
+  --s-fallback-glow: rgba(224, 160, 99, 0.34);
+  --s-fallback-halo: rgba(176, 107, 69, 0.12);
+  --s-mobile-scrim: rgba(8, 8, 10, 0.86);
+}
+
+/* ============================================================
+   Light theme — a gallery, not an inversion.
+
+   Warm paper ground, graphite ink, copper pulled darker so it holds
+   contrast against paper. The 3D world keeps its dark sculptural
+   objects: a dark object on a light ground is the whole point.
+   ============================================================ */
+:root[data-theme='light'] {
+  --c-void: #e7e1d5;
+  --c-obsidian: #f2eee6;
+  --c-graphite: #faf7f1;
+  --c-ash: #ffffff;
+  --c-stone: #eae4d8;
+  --c-edge: #d6cfc0;
+
+  --c-ivory: #1a181c;
+  --c-parchment: #2c2930;
+  --c-silver: #4e4a41;
+  --c-muted: #5f5a4e;
+  --c-faint: #8a8375;
+
+  --c-copper: #9a5430;
+  --c-copper-lift: #8f4a27;
+  --c-copper-deep: #6d3a1e;
+  --c-ember: #a8622c;
+
+  --c-champagne: #66552e;
+  --c-bronze: #5c4a2e;
+
+  --c-emerald: #2f6650;
+  --c-emerald-lift: #285743;
+  --c-forest: #dfe6df;
+
+  --s-glass: rgba(255, 255, 255, 0.93);
+  --s-glass-lift: rgba(255, 255, 255, 0.99);
+  --s-hairline: rgba(26, 24, 28, 0.12);
+  --s-hairline-lift: rgba(26, 24, 28, 0.24);
+  --s-copper-veil: rgba(154, 84, 48, 0.12);
+  --s-emerald-veil: rgba(47, 102, 80, 0.1);
+
+  --grain-opacity: 0.16;
+  --vignette-top: rgba(120, 108, 88, 0.14);
+  --vignette-bottom: rgba(120, 108, 88, 0.18);
+  --vignette-edge: rgba(120, 108, 88, 0.22);
+
+  --s-shadow: rgba(58, 48, 32, 0.22);
+  --s-inset: rgba(255, 255, 255, 0.8);
+  --s-sheen: rgba(26, 24, 28, 0.07);
+  --s-warm-veil: rgba(154, 84, 48, 0.1);
+  --s-cool-veil: rgba(47, 102, 80, 0.07);
+  --s-stroke: rgba(26, 24, 28, 0.34);
+  --s-project-stroke: rgba(154, 84, 48, 0.5);
+  --s-row-wash: rgba(26, 24, 28, 0.05);
+  --s-scrim-core: rgba(250, 247, 241, 0.86);
+  --s-scrim-edge: rgba(250, 247, 241, 0.56);
+  --s-fallback-core: #fff6e6;
+  --s-fallback-glow: rgba(168, 98, 44, 0.22);
+  --s-fallback-halo: rgba(154, 84, 48, 0.08);
+  --s-mobile-scrim: rgba(242, 238, 230, 0.92);
 }
 
 /* Accent resolution used by components that swap tone by context. */

@@ -3,6 +3,7 @@ import { Inter, Instrument_Serif, JetBrains_Mono, Sora } from 'next/font/google'
 import { personal } from '@/data/profile/personal';
 import { summary } from '@/data/profile/summary';
 import { ExperienceProvider } from '@/components/experience/ExperienceProvider';
+import { THEME_BOOT_SCRIPT } from '@/lib/theme/themeStore';
 import './globals.css';
 
 const display = Sora({
@@ -77,8 +78,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#08080a',
-  colorScheme: 'dark',
+  // Both, so the browser chrome follows whichever theme is active.
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#08080a' },
+    { media: '(prefers-color-scheme: light)', color: '#f2eee6' },
+  ],
+  colorScheme: 'dark light',
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -114,7 +119,13 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${display.variable} ${body.variable} ${serif.variable} ${mono.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        {/* Sets the theme before first paint. Without it every load shows a
+            flash of the wrong palette while React hydrates. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body>
         <a className="skip-link" href="#main">
           Skip to content

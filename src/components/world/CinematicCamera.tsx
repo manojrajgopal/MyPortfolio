@@ -20,9 +20,12 @@ const VELOCITY_FOV = 3.4;
  * On a portrait screen the frame is narrow, so a shot composed for a wide
  * viewport leaves its subject small and marooned in the middle. The camera
  * dollies in proportionally instead of the layout simply being shrunk.
+ *
+ * Kept modest: scenes that also recentre their subject for portrait would
+ * otherwise compound with this and put the camera inside the object.
  */
-const PORTRAIT_DOLLY = 0.46;
-const PORTRAIT_DOLLY_MAX = 0.34;
+const PORTRAIT_DOLLY = 0.24;
+const PORTRAIT_DOLLY_MAX = 0.15;
 
 /**
  * A camera operator, not a scroll-linked transform.

@@ -106,7 +106,7 @@
 .kinetic--fill .kinetic__unit {
   position: relative;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(239, 233, 222, 0.34);
+  -webkit-text-stroke: 1px var(--s-stroke);
 }
 
 .kinetic--fill .kinetic__unit::after {

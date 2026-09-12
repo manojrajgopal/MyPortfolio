@@ -9,6 +9,7 @@ import { LightShaft } from '@/components/world/primitives/LightShaft';
 import { Monolith } from '@/components/world/primitives/Monolith';
 import { getScrollEngine } from '@/lib/scroll/engineSingleton';
 import { smoothstep } from '@/lib/utils/clamp';
+import { useThemeHex } from '@/hooks/useResolvedTheme';
 
 interface EducationSceneProps {
   readonly profile: PerformanceProfile;
@@ -36,6 +37,7 @@ export function EducationScene({
   reducedMotion,
 }: EducationSceneProps): React.JSX.Element {
   const engine = getScrollEngine();
+  const groundColor = useThemeHex(hex.void, 0xd6cfc0);
 
   return (
     <group position={[0, -4, CELL_Z.education]}>
@@ -75,7 +77,7 @@ export function EducationScene({
       {/* Ground: a dark plane that catches just enough light to exist. */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.02, -8]}>
         <planeGeometry args={[90, 120]} />
-        <meshStandardMaterial color={hex.void} roughness={0.94} metalness={0.1} />
+        <meshStandardMaterial color={groundColor} roughness={0.94} metalness={0.1} />
       </mesh>
 
       <DustField

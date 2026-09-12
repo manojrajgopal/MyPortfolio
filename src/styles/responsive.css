@@ -55,6 +55,19 @@
   /* Supporting prose that a phone frame has no room for. */
   .hide-on-phone { display: none; }
 
+  /* A phone frame sees far more of the world vertically, so whatever the
+     chapter is showing can end up directly behind the type. The content sits
+     in the lower third here, and this guarantees it reads over any backdrop
+     without darkening the world above it. */
+  .stage::after {
+    content: "";
+    position: absolute;
+    inset: 34% 0 0 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent 0%, var(--s-mobile-scrim) 46%);
+  }
+
   :root {
     --t-colossal: clamp(2.8rem, 17vw, 4.6rem);
     --t-display: clamp(2.1rem, 11vw, 3.1rem);

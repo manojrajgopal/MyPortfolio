@@ -221,7 +221,7 @@
   font-size: clamp(3rem, 9vw, 7.5rem);
   line-height: 0.8;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(176, 107, 69, 0.55);
+  -webkit-text-stroke: 1px var(--s-project-stroke);
   font-family: var(--f-display);
   font-weight: 200;
   /* The numeral wipes upward as the camera reaches the station. */
@@ -354,7 +354,7 @@
 .skills__group:focus-visible,
 .skills__group[data-active='true'] {
   border-left-color: var(--accent, var(--c-copper));
-  background: linear-gradient(to right, rgba(239, 233, 222, 0.045), transparent 62%);
+  background: linear-gradient(to right, var(--s-row-wash), transparent 62%);
 }
 
 .skills__body {
@@ -513,8 +513,8 @@
      without darkening the sky itself. */
   background: radial-gradient(
     56% 48% at 50% 46%,
-    rgba(5, 5, 6, 0.72) 0%,
-    rgba(5, 5, 6, 0.42) 46%,
+    var(--s-scrim-core) 0%,
+    var(--s-scrim-edge) 46%,
     transparent 78%
   );
 }

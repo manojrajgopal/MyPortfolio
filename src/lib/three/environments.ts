@@ -171,3 +171,59 @@ export const environments: Record<SceneId, EnvironmentRecipe> = {
     exposure: 0.98,
   },
 };
+
+/* ============================================================
+   Light theme
+
+   The recipes above are authored for the dark world. Rather than
+   maintain a second set of twelve — which would drift out of sync
+   the first time a chapter is retuned — the light world is derived
+   from them.
+
+   The transform is not an inversion. Fog and background become paper,
+   ambient rises sharply so nothing falls into silhouette, key lights
+   cool toward daylight, and exposure comes down because a bright
+   ground plus a bright key clips immediately. The objects themselves
+   stay dark: a dark sculpture on a pale ground is the whole idea.
+   ============================================================ */
+
+/** Paper tones the light world sits in, per chapter mood. */
+const LIGHT_GROUND: Partial<Record<SceneId, number>> = {
+  ai: 0xe4ece6,
+  certifications: 0xece6da,
+  achievement: 0xe6ece8,
+  final: 0xf0e3d2,
+};
+
+const LIGHT_DEFAULT_GROUND = 0xeee9e0;
+
+/** Warmed toward daylight; the copper accents carry the colour instead. */
+const LIGHT_KEY = 0xfff4e2;
+const LIGHT_FILL = 0xd8cdbb;
+
+export function toLightRecipe(recipe: EnvironmentRecipe, scene: SceneId): EnvironmentRecipe {
+  const ground = LIGHT_GROUND[scene] ?? LIGHT_DEFAULT_GROUND;
+
+  return {
+    ...recipe,
+    fog: ground,
+    // Thinner atmosphere: heavy fog over a pale ground turns the whole
+    // frame into a flat wash with nothing to read.
+    fogDensity: recipe.fogDensity * 0.62,
+    background: ground,
+    ambient: { color: 0xffffff, intensity: 0.85 + recipe.ambient.intensity * 0.5 },
+    key: { ...recipe.key, color: LIGHT_KEY, intensity: recipe.key.intensity * 0.72 },
+    fill: { ...recipe.fill, color: LIGHT_FILL, intensity: recipe.fill.intensity * 0.8 },
+    rim: { ...recipe.rim, intensity: recipe.rim.intensity * 0.55 },
+    // A bright ground clips fast; pull the stop down to hold the highlights.
+    exposure: recipe.exposure * 0.78,
+  };
+}
+
+/** The light world, derived once at module load. */
+export const lightEnvironments: Record<SceneId, EnvironmentRecipe> = Object.fromEntries(
+  (Object.keys(environments) as SceneId[]).map((scene) => [
+    scene,
+    toLightRecipe(environments[scene], scene),
+  ]),
+) as Record<SceneId, EnvironmentRecipe>;

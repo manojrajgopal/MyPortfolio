@@ -13,7 +13,7 @@
 .textarea {
   width: 100%;
   padding: 0.75rem 0.9rem;
-  background: rgba(23, 25, 29, 0.5);
+  background: var(--s-glass);
   border: 1px solid var(--s-hairline);
   color: var(--c-ivory);
   font-family: var(--f-body);
@@ -33,7 +33,7 @@
 .textarea:focus {
   outline: none;
   border-color: var(--c-copper);
-  background: rgba(35, 37, 42, 0.6);
+  background: var(--s-glass-lift);
 }
 
 .input:focus-visible,

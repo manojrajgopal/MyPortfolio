@@ -7,6 +7,7 @@ import { scaleCount, type PerformanceProfile } from '@/lib/three/performance';
 import { DustField } from '@/components/world/primitives/DustField';
 import { LightShaft } from '@/components/world/primitives/LightShaft';
 import { gridTexture } from '@/lib/three/textures';
+import { useThemeHex } from '@/hooks/useResolvedTheme';
 import { CertificateArtifact } from './CertificateArtifact';
 
 interface CertificationVaultProps {
@@ -44,6 +45,10 @@ export function CertificationVault({
   profile,
   reducedMotion,
 }: CertificationVaultProps): React.JSX.Element {
+  // The vault is an enclosed room; its surfaces follow the theme.
+  const wallColor = useThemeHex(hex.obsidian, 0xe4ded1);
+  const floorColor = useThemeHex(hex.void, 0xcfc8b9);
+
   return (
     <group position={[0, 0, CELL_Z.certifications]}>
       {certifications.map((certification, index) => (
@@ -60,7 +65,7 @@ export function CertificationVault({
       <mesh position={[0, 2, -9]}>
         <planeGeometry args={[40, 26]} />
         <meshStandardMaterial
-          color={hex.obsidian}
+          color={wallColor}
           roughness={0.92}
           metalness={0.14}
           map={gridTexture(512, 64)}
@@ -68,7 +73,7 @@ export function CertificationVault({
       </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4.6, -2]}>
         <planeGeometry args={[40, 30]} />
-        <meshStandardMaterial color={hex.void} roughness={0.4} metalness={0.6} />
+        <meshStandardMaterial color={floorColor} roughness={0.4} metalness={0.6} />
       </mesh>
 
       <LightShaft

@@ -7,6 +7,7 @@ import { personal } from '@/data/profile/personal';
 import { getSceneAnchor } from '@/data/navigation/scenes';
 import { useActiveScene } from '@/hooks/useSceneProgress';
 import { useExperience } from '@/components/experience/ExperienceProvider';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { cn } from '@/lib/utils/cn';
 import styles from './CinematicNavigation.module.css';
 
@@ -71,6 +72,10 @@ export function CinematicNavigation(): React.JSX.Element {
             </li>
           );
         })}
+
+        <li className={styles.themeRow}>
+          <ThemeToggle />
+        </li>
 
         <li className={styles.routes}>
           {routes.map((route) => (
