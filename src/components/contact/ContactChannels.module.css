@@ -23,29 +23,25 @@
   font-style: italic;
 }
 
+/*
+ * No underline sweep on the value itself.
+ *
+ * The row already draws a copper rule along its own bottom border on hover,
+ * and a second line directly beneath the text read as a double underline
+ * rather than as one piece of feedback. The row rule, the copper "Visit" and
+ * the arrow nudge are the hover state.
+ */
 .value {
   font-family: var(--f-body);
   font-size: var(--t-small);
   color: var(--c-ivory);
-  position: relative;
   word-break: break-word;
+  transition: color var(--d-fast) var(--e-out);
 }
 
-a.value::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 100%;
-  height: 1px;
-  background: var(--c-copper);
-  scale: 0 1;
-  transform-origin: left;
-  transition: scale 480ms var(--e-out);
-}
-
-a.value:hover::after {
-  scale: 1 1;
+a.value:hover,
+a.value:focus-visible {
+  color: var(--c-copper-lift);
 }
 
 .copy {
@@ -69,4 +65,24 @@ a.value:hover::after {
   .channel > *:first-child {
     grid-column: 1 / -1;
   }
+}
+
+.visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--c-muted);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.channel:hover .visit {
+  color: var(--c-copper-lift);
+}
+
+.visit svg {
+  transition: transform var(--d-mid) var(--e-out);
+}
+
+.channel:hover .visit svg {
+  transform: translate(2px, -2px);
 }

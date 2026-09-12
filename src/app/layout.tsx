@@ -108,6 +108,12 @@ const personSchema = {
   },
   knowsLanguage: ['English', 'Kannada', 'Hindi', 'Telugu'],
   knowsAbout: ['Python', 'C# .NET', 'REST APIs', 'TensorFlow', 'NLP', 'React', 'AWS', 'Docker'],
+  // Profiles that are the same person elsewhere — this is how a search engine
+  // connects the page to them.
+  sameAs: [
+    'https://www.linkedin.com/in/manoj-r-8767ba25a/',
+    'https://github.com/manojrajgopal',
+  ],
 } as const;
 
 export default function RootLayout({

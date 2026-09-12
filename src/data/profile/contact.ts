@@ -1,9 +1,11 @@
 import type { ContactChannel } from '@/types/profile';
 
 /**
- * Verified channels come straight from the résumé.
- * Profile URLs were not supplied, so they are declared as explicit placeholders
- * rather than invented. Fill in `href` and drop `placeholder` to activate one.
+ * Every channel here is verified and live.
+ *
+ * The `placeholder` flag on `ContactChannel` stays in the type for any future
+ * profile that is announced before its URL exists — the UI renders such an
+ * entry as pending rather than inventing a link.
  */
 export const contactChannels: readonly ContactChannel[] = [
   {
@@ -23,34 +25,16 @@ export const contactChannels: readonly ContactChannel[] = [
   {
     id: 'linkedin',
     label: 'LinkedIn',
-    value: 'Profile link pending',
-    href: null,
+    value: 'linkedin.com/in/manoj-r-8767ba25a',
+    href: 'https://www.linkedin.com/in/manoj-r-8767ba25a/',
     kind: 'link',
-    placeholder: true,
   },
   {
     id: 'github',
     label: 'GitHub',
-    value: 'Profile link pending',
-    href: null,
+    value: 'github.com/manojrajgopal',
+    href: 'https://github.com/manojrajgopal',
     kind: 'link',
-    placeholder: true,
-  },
-  {
-    id: 'portfolio',
-    label: 'Portfolio',
-    value: 'Profile link pending',
-    href: null,
-    kind: 'link',
-    placeholder: true,
-  },
-  {
-    id: 'hackerrank',
-    label: 'HackerRank',
-    value: 'Profile link pending',
-    href: null,
-    kind: 'link',
-    placeholder: true,
   },
 ] as const;
 

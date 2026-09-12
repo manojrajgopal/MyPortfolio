@@ -1,16 +1,21 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Check, Copy } from 'lucide-react';
+import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import { contactChannels } from '@/data/profile/contact';
 import styles from './ContactChannels.module.css';
+
+/** `mailto:` and `tel:` hand off to the OS; anything else leaves the site. */
+function isExternal(href: string): boolean {
+  return /^https?:/i.test(href);
+}
 
 /**
  * The channels, as a list of records.
  *
- * Links that exist are links. Links that were never supplied are shown as
- * pending rather than invented — an empty slot is more honest than a guess
- * at someone's profile URL.
+ * Links that exist are links. A channel declared without a URL is shown as
+ * pending rather than invented — an empty slot is more honest than a guess at
+ * someone's profile address.
  */
 export function ContactChannels(): React.JSX.Element {
   const [copied, setCopied] = useState<string | null>(null);
@@ -33,7 +38,15 @@ export function ContactChannels(): React.JSX.Element {
           <span className="type-meta">{channel.label}</span>
 
           {channel.href ? (
-            <a className={styles.value} href={channel.href}>
+            <a
+              className={styles.value}
+              href={channel.href}
+              // Profile links leave the site; mail and phone hand off to the
+              // operating system and must stay in place.
+              {...(isExternal(channel.href)
+                ? { target: '_blank', rel: 'noreferrer noopener' }
+                : {})}
+            >
               {channel.value}
             </a>
           ) : (
@@ -54,8 +67,13 @@ export function ContactChannels(): React.JSX.Element {
               )}
               <span className="type-meta">{copied === channel.id ? 'Copied' : 'Copy'}</span>
             </button>
+          ) : channel.href ? (
+            <span className={styles.visit} aria-hidden="true">
+              <span className="type-meta">Visit</span>
+              <ArrowUpRight size={13} />
+            </span>
           ) : (
-            <span className="type-meta">{channel.placeholder ? 'Pending' : ''}</span>
+            <span className="type-meta">Pending</span>
           )}
         </li>
       ))}
